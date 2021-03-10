@@ -8,13 +8,15 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 data <- read.csv('./activity.csv')
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r message=FALSE, warning=FALSE}
+
+```r
 ### Calculate the total number of steps taken per day
 library(dplyr); library(lubridate);
 
@@ -41,16 +43,34 @@ hist(stepsPerDay$steps,
 dev.off()
 ```
 
+```
+## png 
+##   2
+```
+
 Mean and median of steps taken per day:
 
-```{r}
+
+```r
 paste('Mean:', mean(stepsPerDay$steps))
+```
+
+```
+## [1] "Mean: 600.88679245283"
+```
+
+```r
 paste('Median:', median(stepsPerDay$steps))
+```
+
+```
+## [1] "Median: 555"
 ```
 
 ## What is the average daily activity pattern?
 
-```{r message=FALSE, warning=FALSE}
+
+```r
 stepsPerInterval <- data
 # remove NA
 stepsPerInterval <- stepsPerInterval[!is.na(stepsPerInterval$steps),]
@@ -68,28 +88,44 @@ plot(stepsPerInterval$interval, stepsPerInterval$avgSteps,
 dev.off()
 ```
 
+```
+## png 
+##   2
+```
+
 Which interval has the maximum average number of steps taken?
 
-```{r}
+
+```r
 paste('Interval with maximum average number of steps taken:',
       stepsPerInterval[
               stepsPerInterval$avgSteps==max(stepsPerInterval$avgSteps), 
               'interval'])
 ```
 
+```
+## [1] "Interval with maximum average number of steps taken: 835"
+```
+
 ## Imputing missing values
 
 Total number of missing values in the dataset
 
-```{r}
+
+```r
 # only data$steps has missing values
 paste('Number of missing values in the dataset:', 
       count(data[is.na(data$steps), ]))
 ```
 
+```
+## [1] "Number of missing values in the dataset: 2304"
+```
+
 Imputation strategy: take the average steps taken for each 5 minute interval, and impute that value anywhere that interval is NA. Round to the nearest whole digit.
 
-```{r}
+
+```r
 # stepsPerInterval is already the avg steps per interval.
 dataImpute <- data
 
@@ -115,7 +151,8 @@ for(i in 1:nrow(dataImpute)){
 
 Now that we have imputed, what does the histogram for number of steps taken in a day look like?
 
-```{r}
+
+```r
 # Create a histogram
 png('./figures/fig3.png')
 hist(dataImpute$steps, 
@@ -124,11 +161,28 @@ hist(dataImpute$steps,
 dev.off()
 ```
 
+```
+## png 
+##   2
+```
+
 Using imputed data, what are the new mean and median?
 
-```{r}
+
+```r
 paste('Mean:', mean(dataImpute$steps))
+```
+
+```
+## [1] "Mean: 37.3806921675774"
+```
+
+```r
 paste('Median:', median(dataImpute$steps))
+```
+
+```
+## [1] "Median: 0"
 ```
 
 ### Impact:
@@ -139,7 +193,8 @@ Doing this heavily skews the histogram to the left (toward 0).
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r message=FALSE, warning=FALSE}
+
+```r
 ### Create factor variable of weekend/weekday based on date
 days <- data
 days <- mutate(days, dayType = weekdays(date))
@@ -161,9 +216,15 @@ days <- summarise(days, avgSteps=mean(steps))
 
 ### Panel plot of the day type showing average steps per interval.
 
-```{r message=FALSE}
+
+```r
 library(lattice);
 png('./figures/fig4.png')
 xyplot(avgSteps ~ interval | dayType, data=days, layout=c(1, 2), type='l')
 dev.off()
+```
+
+```
+## png 
+##   2
 ```
